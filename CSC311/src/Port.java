@@ -1,12 +1,31 @@
 
 public class Port {
-	private static int calculateTotalInvestment(List<Asset> assets) { // assets list take it from Aso code 
-	    int totalInvestment = 0;
-	    for (Asset asset : assets) {
-	        totalInvestment += asset.quantity;
-	    }
-	    return totalInvestment;
-	}
+	
+
+for (int i = 0; i <= assets.get(0).quantity; i++) {
+    for (int j = 0; j <= assets.get(1).quantity; j++) {
+        for (int k = 0; k <= assets.get(2).quantity; k++) {
+            int totalUnits = i + j + k;
+            if (totalUnits <= totalInvestment) {
+                double totalReturn = Port.calculateExpectedReturn(assets, i, j, k);
+                double totalRisk = Port.calculatePortfolioRisk(assets, i, j, k);
+                if (totalRisk <= riskTolerance && totalReturn > bestReturn) {
+                    // Check if the difference between this choice and the best choice so far is acceptable
+                    if (Math.abs(totalReturn - bestReturn) < acceptableDifference) {
+                        // If the difference is within acceptable range, stop the search
+                        return;
+                    }
+                    bestReturn = totalReturn;
+                    bestRisk = totalRisk;
+                    bestQuantity1 = i;
+                    bestQuantity2 = j;
+                    bestQuantity3 = k;
+                }
+            }
+        }
+    }
+}
+
 	private static double calculateExpectedReturn(List<Asset> assets, int quantity1, int quantity2, int quantity3) {
 	    double expectedReturn = 0;
 	    for (int i = 0; i < assets.size(); i++) {
