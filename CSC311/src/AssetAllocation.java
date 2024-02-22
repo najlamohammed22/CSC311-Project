@@ -19,14 +19,15 @@ public class AssetAllocation {
         }
     }
 
-
-
+    // Method to read assets from the file and return a list of Asset objects
     private static List<Asset> readAssetsFromFile(String fileName) {
         List<Asset> assets = new ArrayList<>();
+
         try (Scanner scanner = new Scanner(new File(fileName))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] parts = line.split(" : ");
+
                 if (parts.length == 4) {
                     String id = parts[0];
                     double expectedReturn = Double.parseDouble(parts[1]);
@@ -38,22 +39,80 @@ public class AssetAllocation {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
         return assets;
     }
 
+    // Method to read total investment from the file and return the value as a double
+    private static double readTotalInvestment(String fileName) {
+        double totalInvestment = 0.0;
 
-public static void main(String[] args) {
-    List<Asset> Assets = readAssetsFromFile("Example.txt");
-    if (Assets.isEmpty()) {
-        System.err.println("No assets found in the file.");
-        return;
+        try (Scanner scanner = new Scanner(new File(fileName))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(" : ");
+
+                if (parts.length == 13 && parts[13].equalsIgnoreCase("Total Investment")) {
+                    totalInvestment = Double.parseDouble(parts[3]);
+                    break; // No need to continue reading once found
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return totalInvestment;
     }
-    for (Asset asset : Assets) {
-        System.out.println("ID: " + asset.id + ", Expected Return: " + asset.expectedReturn + ", Risk: " + asset.risk + ", Quantity: " + asset.quantity);
+
+    // Method to read risk tolerance level from the file and return the value as a double
+    private static double readRiskToleranceLevel(String fileName) {
+        double riskToleranceLevel = 0.0;
+
+        try (Scanner scanner = new Scanner(new File(fileName))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(" \n ");
+
+                if (parts.length == 4 ) {
+                    String[] space = line.split(" ");
+
+                    for (int i=0 ; i<space.length;i++){
+
+                        //if (Character.isDigit(space[i]))
+                    }
+                    riskToleranceLevel = Double.parseDouble(parts[4]);
+                    break; // No need to continue reading once found
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return riskToleranceLevel;
     }
 
-}}
+    public static void main(String[] args) {
+        // Read assets from the file
+        List<Asset> assets = readAssetsFromFile("Example.txt");
 
+        // Print assets
+        if (assets.isEmpty()) {
+            System.err.println("No assets found in the file.");
+            return;
+        }
+        for (Asset asset : assets) {
+            System.out.println("ID: " + asset.id + ", Expected Return: " + asset.expectedReturn + ", Risk: " + asset.risk + ", Quantity: " + asset.quantity);
+        }
+
+        // Read total investment and risk tolerance level from the file
+        double totalInvestment = readTotalInvestment("Example.txt");
+        double riskToleranceLevel = readRiskToleranceLevel("Example.txt");
+
+        // Print total investment and risk tolerance level
+        System.out.println("Total Investment: " + totalInvestment);
+        System.out.println("Risk Tolerance Level: " + riskToleranceLevel);
+    }
+}
 
 
 
