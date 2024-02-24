@@ -52,7 +52,7 @@ public class AssetAllocation {
         return allAssets;
     }
 
-    private static double readTotalInvestment(String fileName) {
+private static double readTotalInvestment(String fileName) {
         double totalInvestment = 0.0;
 
         try (Scanner scanner = new Scanner(new File(fileName))) {
@@ -86,89 +86,59 @@ public class AssetAllocation {
         return riskToleranceLevel;
     }
 
-    public static void main(String[] args) {
-        List<List<Asset>> allAssets = readAssetsFromFile("Example.txt");
 
-        if (allAssets.isEmpty() || allAssets.size() < 2) {
+     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the filename: ");
+        String fileName = scanner.nextLine();
+
+        scanner.close();
+
+        List<List<Asset>> allAssets = readAssetsFromFile(fileName);
+
+        if (allAssets.isEmpty() || allAssets.size() < 1) {
             System.err.println("Insufficient assets found in the file.");
             return;
         }
 
-        List<Asset> firstAssets = allAssets.get(0);
-        List<Asset> secondAssets = allAssets.get(1);
+        List<Asset> assets = allAssets.get(0);
 
-        double totalInvestmentFirst = readTotalInvestment("Example.txt");
-        double riskToleranceLevelFirst = readRiskToleranceLevel("Example.txt");
-        double totalInvestmentSecond = readTotalInvestment("Example.txt");
-        double riskToleranceLevelSecond = readRiskToleranceLevel("Example.txt");
+        double totalInvestment = readTotalInvestment(fileName);
+        double riskToleranceLevel = readRiskToleranceLevel(fileName);
 
-        double bestReturn1 = 0.0;
-        double bestRisk1 = Double.MAX_VALUE;
-        int bestQuantity1_1 = 0;
-        int bestQuantity2_1 = 0;
-        int bestQuantity3_1 = 0;
+        double bestReturn = 0.0;
+        double bestRisk = Double.MAX_VALUE;
+        int bestQuantity1 = 0;
+        int bestQuantity2 = 0;
+        int bestQuantity3 = 0;
 
-        double bestReturn2 = 0.0;
-        double bestRisk2 = Double.MAX_VALUE;
-        int bestQuantity1_2 = 0;
-        int bestQuantity2_2 = 0;
-        int bestQuantity3_2 = 0;
-
-        for (int i = 0; i <= firstAssets.get(0).quantity; i++) {
-            for (int j = 0; j <= firstAssets.get(1).quantity; j++) {
-                for (int k = 0; k <= firstAssets.get(2).quantity; k++) {
+        for (int i = 0; i <= allAssets.get(0).get(0).quantity; i++) {
+            for (int j = 0; j <= allAssets.get(0).get(1).quantity; j++) {
+                for (int k = 0; k <= allAssets.get(0).get(2).quantity; k++) {
                     int totalUnits = i + j + k;
-                    if (totalUnits <= totalInvestmentFirst) {
-                        double totalReturn = calculateExpectedReturn(firstAssets, i, j, k);
-                        double totalRisk = calculatePortfolioRisk(firstAssets, i, j, k, totalInvestmentFirst);
-                        if (totalRisk <= riskToleranceLevelFirst && totalReturn > bestReturn1) {
-                            bestReturn1 = totalReturn;
-                            bestRisk1 = totalRisk;
-                            bestQuantity1_1 = i;
-                            bestQuantity2_1 = j;
-                            bestQuantity3_1 = k;
+                    if (totalUnits <= totalInvestment) {
+                        double totalReturn = calculateExpectedReturn(allAssets.get(0), i, j, k);
+                        double totalRisk = calculatePortfolioRisk(allAssets.get(0), i, j, k, totalInvestment);
+                        if (totalRisk <= riskToleranceLevel && totalReturn > bestReturn) {
+                            bestReturn = totalReturn;
+                            bestRisk = totalRisk;
+                            bestQuantity1 = i;
+                            bestQuantity2 = j;
+                            bestQuantity3 = k;
                         }
                     }
                 }
             }
         }
 
-      for (int i = 0; i <= secondAssets.get(0).quantity; i++) {
-    for (int j = 0; j <= secondAssets.get(1).quantity; j++) {
-        for (int k = 0; k <= secondAssets.get(2).quantity; k++) {
-            int totalUnits = i + j + k;
-            if (totalUnits <= totalInvestmentSecond) {
-                double totalReturn = calculateExpectedReturn(secondAssets, i, j, k);
-                double totalRisk = calculatePortfolioRisk(secondAssets, i, j, k, totalInvestmentSecond);
-                if (totalRisk <= riskToleranceLevelSecond && totalReturn > bestReturn2) {
-                    bestReturn2 = totalReturn;
-                    bestRisk2 = totalRisk;
-                    bestQuantity1_2 = i;
-                    bestQuantity2_2 = j;
-                    bestQuantity3_2 = k;
-                }
-            }
-        }
+        System.out.println("Optimal Allocation:");
+        System.out.println(allAssets.get(0).get(0).id + ": " + bestQuantity1 + " units");
+        System.out.println(allAssets.get(0).get(1).id + ": " + bestQuantity2 + " units");
+        System.out.println(allAssets.get(0).get(2).id + ": " + bestQuantity3 + " units");
+        System.out.println("Expected Portfolio Return: " + bestReturn);
+        System.out.println("Portfolio Risk Level: " + bestRisk);
     }
-}
-
-
-
-        System.out.println("Optimal Allocation for First Assets:");
-        System.out.println(firstAssets.get(0).id + ": " + bestQuantity1_1 + " units");
-        System.out.println(firstAssets.get(1).id + ": " + bestQuantity2_1 + " units");
-        System.out.println(firstAssets.get(2).id + ": " + bestQuantity3_1 + " units");
-        System.out.println("Expected Portfolio Return: " + bestReturn1);
-        System.out.println("Portfolio Risk Level: " + bestRisk1);
-
-        System.out.println("\nOptimal Allocation for Second Assets:");
-        System.out.println(secondAssets.get(0).id + ": " + bestQuantity1_2 + " units");
-        System.out.println(secondAssets.get(1).id + ": " + bestQuantity2_2 + " units");
-        System.out.println(secondAssets.get(2).id + ": " + bestQuantity3_2 + " units");
-        System.out.println("Expected Portfolio Return: " + bestReturn2);
-        System.out.println("Portfolio Risk Level: " + bestRisk2);
-    }
-
     private static double calculateExpectedReturn(List<Asset> assets, int quantity1, int quantity2, int quantity3) {
         double expectedReturn = 0;
         for (int i = 0; i < assets.size(); i++) {
@@ -197,5 +167,3 @@ public class AssetAllocation {
         }
     }
 }
-
-
